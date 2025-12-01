@@ -1,0 +1,12 @@
+[package]
+name = "aoc-2025"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+clap = { version = "4.5.53", features = ["derive"] }
+colorize = "0.1.0"
+indicatif = { version = "0.18.3", features = ["rayon"] }
+nom = "8.0.0"
+rayon = "1.11.0"
+seq-macro = "0.3.6"
