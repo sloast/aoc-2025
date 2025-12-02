@@ -25,7 +25,7 @@ fn parse<T: FromStr>(s: &str) -> Vec<(T, T)> {
     vec
 }
 
-pub fn run(input: Input, only_2: bool) -> u64 {
+fn run(input: Input, only_2: bool) -> u64 {
     let ids = parse::<String>(read_to_string(input).unwrap().trim());
 
     ids.iter()
