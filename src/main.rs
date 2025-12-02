@@ -4,7 +4,7 @@ use clap::Parser;
 use colorize::AnsiColor;
 use seq_macro::seq;
 
-seq!(I in 1..=1 {
+seq!(I in 1..=2 {
     mod day~I;
 });
 
@@ -42,7 +42,7 @@ fn main() {
 
     let open_file = || BufReader::new(File::open(&path).expect("Input file cannot be opened!"));
 
-    seq!(I in 1..=1 {
+    seq!(I in 1..=2 {
         if args.day == I {
             if !args.part2 {
                 println!("{} {}", "Part 1:".bold().blue(), day~I::part1(open_file()));
