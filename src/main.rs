@@ -1,10 +1,10 @@
-use std::{fs::File, io::BufReader, path::PathBuf};
+use std::{fs::File, io::BufReader, path::PathBuf, time::Instant};
 
 use clap::Parser;
 use colorize::AnsiColor;
 use seq_macro::seq;
 
-seq!(I in 1..=3 {
+seq!(I in 1..=4 {
     mod day~I;
 });
 
@@ -42,15 +42,27 @@ fn main() {
 
     let open_file = || BufReader::new(File::open(&path).expect("Input file cannot be opened!"));
 
-    seq!(I in 1..=3 {
+    macro_rules! run {
+        ($fn:expr, $other:ident, $msg:expr, $colour:ident) => {
+            if !args.$other {
+                let start = Instant::now();
+                let output = $fn(open_file());
+                let duration = Instant::now().duration_since(start);
+                println!(
+                    "{time} {msg} {output}",
+                    time = format!("[{:>8?}]", duration).b_black(),
+                    msg = $msg.bold().$colour(),
+                    output = output
+                );
+            }
+        };
+    }
+
+    seq!(I in 1..=4 {
         if args.day == I {
             println!("{}", format!("### Day {} ###", I).bold().green());
-            if !args.part2 {
-                println!("{} {}", "Part 1:".bold().blue(), day~I::part1(open_file()));
-            }
-            if !args.part1 {
-                println!("{} {}", "Part 2:".bold().magenta(),  day~I::part2(open_file()));
-            }
+            run!(day~I::part1, part2, "Part 1:", blue);
+            run!(day~I::part2, part1, "Part 2:", magenta);
         }
     });
 }
