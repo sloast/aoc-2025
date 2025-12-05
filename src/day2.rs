@@ -1,5 +1,6 @@
 use std::{io::read_to_string, str::FromStr};
 
+use anyhow::Result;
 use nom::{
     Parser,
     character::{char, complete::digit1},
@@ -87,10 +88,10 @@ fn run(input: Input, only_2: bool) -> u64 {
         .sum()
 }
 
-pub fn part1(input: Input) -> u64 {
-    run(input, true)
+pub fn part1(input: Input) -> Result<u64> {
+    Ok(run(input, true))
 }
 
-pub fn part2(input: Input) -> u64 {
-    run(input, false)
+pub fn part2(input: Input) -> Result<u64> {
+    Ok(run(input, false))
 }

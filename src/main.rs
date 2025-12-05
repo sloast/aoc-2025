@@ -1,10 +1,11 @@
 use std::{fs::File, io::BufReader, path::PathBuf, time::Instant};
 
+use anyhow::Result;
 use clap::Parser;
 use colorize::AnsiColor;
 use seq_macro::seq;
 
-seq!(I in 1..=4 {
+seq!(I in 1..=5 {
     mod day~I;
 });
 
@@ -24,7 +25,7 @@ struct Args {
     part2: bool,
 }
 
-fn main() {
+fn main() -> Result<()> {
     let args = Args::parse();
 
     let mut path = PathBuf::from("./inputs");
@@ -46,7 +47,7 @@ fn main() {
         ($fn:expr, $other:ident, $msg:expr, $colour:ident) => {
             if !args.$other {
                 let start = Instant::now();
-                let output = $fn(open_file());
+                let output = $fn(open_file())?;
                 let duration = Instant::now().duration_since(start);
                 println!(
                     "{time} {msg} {output}",
@@ -58,11 +59,13 @@ fn main() {
         };
     }
 
-    seq!(I in 1..=4 {
+    seq!(I in 1..=5 {
         if args.day == I {
             println!("{}", format!("### Day {} ###", I).bold().green());
             run!(day~I::part1, part2, "Part 1:", blue);
             run!(day~I::part2, part1, "Part 2:", magenta);
         }
     });
+
+    Ok(())
 }

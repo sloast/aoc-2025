@@ -1,5 +1,7 @@
 use std::io::BufRead;
 
+use anyhow::Result;
+
 use crate::Input;
 
 fn parse(input: Input) -> impl Iterator<Item = Vec<u64>> {
@@ -28,10 +30,10 @@ fn process_bank<const N: usize>(bank: Vec<u64>) -> u64 {
     digits.iter().fold(0, |acc, x| acc * 10 + x)
 }
 
-pub fn part1(input: Input) -> u64 {
-    parse(input).map(process_bank::<2>).sum()
+pub fn part1(input: Input) -> Result<u64> {
+    Ok(parse(input).map(process_bank::<2>).sum())
 }
 
-pub fn part2(input: Input) -> u64 {
-    parse(input).map(process_bank::<12>).sum()
+pub fn part2(input: Input) -> Result<u64> {
+    Ok(parse(input).map(process_bank::<12>).sum())
 }

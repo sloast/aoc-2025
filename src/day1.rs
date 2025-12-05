@@ -1,5 +1,6 @@
 use std::io::BufRead;
 
+use anyhow::Result;
 use nom::{
     Parser,
     branch::alt,
@@ -20,7 +21,7 @@ fn parse(s: &str) -> (i32, i32) {
     res.unwrap().1
 }
 
-pub fn part1(input: Input) -> String {
+pub fn part1(input: Input) -> Result<String> {
     let mut pos: i32 = 50;
     let mut total = 0;
 
@@ -34,10 +35,10 @@ pub fn part1(input: Input) -> String {
         }
     }
 
-    total.to_string()
+    Ok(total.to_string())
 }
 
-pub fn part2(input: Input) -> String {
+pub fn part2(input: Input) -> Result<String> {
     let mut pos: i32 = 50;
     let mut total = 0;
 
@@ -56,5 +57,5 @@ pub fn part2(input: Input) -> String {
         }
     }
 
-    total.to_string()
+    Ok(total.to_string())
 }

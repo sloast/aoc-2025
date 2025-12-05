@@ -1,13 +1,15 @@
 use std::io::BufRead;
 
+use anyhow::Result;
+
 use crate::Input;
 
-pub fn part1(input: Input) -> usize {
+pub fn part1(input: Input) -> Result<usize> {
     let grid = PaperGrid::from(input);
-    grid.count() - grid.remove_rolls().count()
+    Ok(grid.count() - grid.remove_rolls().count())
 }
 
-pub fn part2(input: Input) -> usize {
+pub fn part2(input: Input) -> Result<usize> {
     let mut grid = PaperGrid::from(input);
     let nb_rolls = grid.count();
     loop {
@@ -17,7 +19,7 @@ pub fn part2(input: Input) -> usize {
         }
         grid = next;
     }
-    nb_rolls - grid.count()
+    Ok(nb_rolls - grid.count())
 }
 
 type Inner = u8;
