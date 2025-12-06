@@ -1,11 +1,11 @@
 use std::{fs::File, io::BufReader, path::PathBuf, time::Instant};
 
-use anyhow::{Result, bail};
+use anyhow::Result;
 use clap::Parser;
 use colorize::AnsiColor;
 use seq_macro::seq;
 
-seq!(I in 1..=6 {
+seq!(I in 1..=7 {
     mod day~I;
 });
 
@@ -44,7 +44,7 @@ fn main() -> Result<()> {
         };
     }
 
-    seq!(I in 1..=6 {
+    seq!(I in 1..=7 {
         match args.day {
             Some(I) | None => {
                 let mut path = PathBuf::from("./inputs");
