@@ -3,7 +3,6 @@ use std::{cell::Cell, io::BufRead, ops::Sub};
 use anyhow::{Result, anyhow, bail};
 use fxhash::FxHashMap;
 use indicatif::ProgressBar;
-use rayon::iter::{ParallelBridge, ParallelIterator};
 use seq_macro::seq;
 
 use crate::Input;
@@ -19,6 +18,7 @@ struct Pos(i64, i64, i64);
 struct JunctionBox {
     pos: Pos,
     connections: Vec<Pos>,
+    closest: Cell<Option<Pos>>,
 }
 
 impl Sub for Pos {
@@ -206,6 +206,10 @@ impl Grid {
     }
 
     fn closest(&self, jb: &JunctionBox) -> (Pos, i64) {
+        if let Some(closest) = jb.closest.get() {
+            return (closest, jb.pos - closest);
+        }
+
         let pos = jb.pos;
         let (mut closest, mut dist) = self.closest_in_boxel(jb, pos);
 
@@ -222,6 +226,7 @@ impl Grid {
             (closest, dist) = Self::closest_from_iter(jb, self.iter().map(|jb| jb.pos));
         }
 
+        jb.closest.set(Some(closest));
         (closest, dist)
     }
 
@@ -240,37 +245,33 @@ pub fn part1(input: Input) -> Result<usize> {
         _ => 1000,
     };
 
-    let bar = ProgressBar::new(n);
-
     for _ in 0..n {
-        bar.inc(1);
         let (pos, (closest, _)) = grid
             .iter()
-            .par_bridge()
             .map(|jb| (jb.pos, grid.closest(jb)))
             .min_by_key(|(_, (_, dist))| *dist)
             .ok_or_else(|| anyhow!("no connections found!"))?;
+
         if let Some(e) = grid.get_mut(closest) {
+            e.closest.set(None);
             e.connections.push(pos);
-            grid.get_mut(pos).unwrap().connections.push(closest);
+            let other = grid.get_mut(pos).unwrap();
+            other.closest.set(None);
+            other.connections.push(closest);
         } else {
             bail!("no more connections");
         }
     }
 
-    bar.finish_and_clear();
-
     let circuit_sizes = union_find(&grid);
-
     Ok(circuit_sizes.iter().take(3).product())
 }
 
 pub fn part2(input: Input) -> Result<i64> {
     let mut grid = Grid::try_from(input)?;
-    let n = grid.iter().count();
-
     let nodes = uf_init(&grid);
 
+    let n = grid.iter().count();
     let bar = ProgressBar::new(n as u64);
 
     let mut max_size = 0;
@@ -279,13 +280,17 @@ pub fn part2(input: Input) -> Result<i64> {
         bar.set_position(max_size as u64);
         let (pos, (closest, _)) = grid
             .iter()
-            .par_bridge()
             .map(|jb| (jb.pos, grid.closest(jb)))
             .min_by_key(|(_, (_, dist))| *dist)
             .ok_or_else(|| anyhow!("no connections found!"))?;
+
         if let Some(e) = grid.get_mut(closest) {
+            e.closest.set(None);
             e.connections.push(pos);
-            grid.get_mut(pos).unwrap().connections.push(closest);
+            let other = grid.get_mut(pos).unwrap();
+            other.closest.set(None);
+            other.connections.push(closest);
+
             nodes[&pos].union(&nodes[&closest]);
             max_size = max_size.max(nodes[&pos].root().size.get());
             if max_size == n {
