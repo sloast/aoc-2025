@@ -5,7 +5,7 @@ use clap::Parser;
 use colorize::AnsiColor;
 use seq_macro::seq;
 
-seq!(I in 1..=10 {
+seq!(I in 1..=11 {
     mod day~I;
 });
 
@@ -44,7 +44,7 @@ fn main() -> Result<()> {
         };
     }
 
-    seq!(I in 1..=10 {
+    seq!(I in 1..=11 {
         match args.day {
             Some(I) | None => {
                 let mut path = PathBuf::from("./inputs");
