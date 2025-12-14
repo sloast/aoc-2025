@@ -5,7 +5,7 @@ use clap::Parser;
 use colorize::AnsiColor;
 use seq_macro::seq;
 
-seq!(I in 1..=11 {
+seq!(I in 1..=12 {
     mod day~I;
 });
 
@@ -44,7 +44,7 @@ fn main() -> Result<()> {
         };
     }
 
-    seq!(I in 1..=11 {
+    seq!(I in 1..=10 {
         match args.day {
             Some(I) | None => {
                 let mut path = PathBuf::from("./inputs");
@@ -70,6 +70,63 @@ fn main() -> Result<()> {
             _ => ()
         }
     });
+    match args.day {
+        Some(11) | None => {
+            let mut path = PathBuf::from("./inputs");
+            path.push(11.to_string());
+            let mut path1 = path.clone();
+            path1.push(match &args.input {
+                Some(s) => s,
+                None => {
+                    if args.test {
+                        "test1.txt"
+                    } else {
+                        "input.txt"
+                    }
+                }
+            });
+            println!("{}", format!("### Day {} ###", 11).bold().green());
+            if !args.part2 {
+                run!(day11::part1, &path1, "Part 1:", blue);
+            }
+            let mut path2 = path.clone();
+            path2.push(match &args.input {
+                Some(s) => s,
+                None => {
+                    if args.test {
+                        "test2.txt"
+                    } else {
+                        "input.txt"
+                    }
+                }
+            });
+            if !args.part1 {
+                run!(day11::part2, &path2, "Part 2:", magenta);
+            }
+        }
+        _ => (),
+    }
+    match args.day {
+        Some(12) | None => {
+            let mut path = PathBuf::from("./inputs");
+            path.push(12.to_string());
+            path.push(match &args.input {
+                Some(s) => s,
+                None => {
+                    if args.test {
+                        "test.txt"
+                    } else {
+                        "input.txt"
+                    }
+                }
+            });
+            println!("{}", format!("### Day {} ###", 12).bold().green());
+            if !args.part2 {
+                run!(day12::part1, &path, "Part 1:", blue);
+            }
+        }
+        _ => (),
+    }
 
     Ok(())
 }
